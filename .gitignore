@@ -1,0 +1,35 @@
+# Claude Code
+.claude/
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Logs
+*.log
+
+# Data & output
+dataset/
+output/
+
+# Test results
+*_test.json
+test_results.json
+
+# Local credentials, inputs, weights and generated artifacts
+.env
+.env.*
+!.env.example
+*.log
+__pycache__/
+.venv/
+dataset/
+models/
+output/

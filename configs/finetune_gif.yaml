@@ -1,0 +1,62 @@
+# FastWan2.1-T2V-1.3B GIF LoRA 微调配置
+# 单卡 RTX 4090, 1K GIF 数据
+
+models:
+  student:
+    _target_: fastvideo.train.models.wan.WanModel
+    init_from: models/Wan2.1-T2V-1.3B-Diffusers
+    trainable: true
+
+method:
+  _target_: fastvideo.train.methods.fine_tuning.finetune.FineTuneMethod
+
+training:
+  distributed:
+    num_gpus: 1
+    sp_size: 1
+    tp_size: 1
+    hsdp_replicate_dim: 1
+    hsdp_shard_dim: 1
+
+  data:
+    data_path: dataset/fastvideo-train
+    dataloader_num_workers: 4
+    train_batch_size: 1
+    training_cfg_rate: 0.0
+    seed: 42
+    num_latent_t: 8
+    num_height: 448
+    num_width: 832
+    num_frames: 33
+
+  optimizer:
+    learning_rate: 1.0e-5
+    betas: [0.9, 0.999]
+    weight_decay: 0.01
+    lr_scheduler: constant
+    lr_warmup_steps: 0
+
+  loop:
+    max_train_steps: 5000
+    gradient_accumulation_steps: 1
+
+  checkpoint:
+    output_dir: output/fastwan-gif-lora
+    training_state_checkpointing_steps: 1000
+    checkpoints_total_limit: 3
+    resume_from_checkpoint: latest
+
+  tracker:
+    project_name: opengif
+    run_name: fastwan_gif_lora
+
+  model:
+    enable_gradient_checkpointing_type: full
+
+callbacks:
+  grad_clip:
+    _target_: fastvideo.train.callbacks.grad_clip.GradNormClipCallback
+    max_grad_norm: 1.0
+
+pipeline:
+  flow_shift: 3
